@@ -1,0 +1,17 @@
+{
+  "name": "parity-compare",
+  "version": "1.0.0",
+  "description": "Compare two screenshots of the same screen and report structure, position and content separately, instead of one percentage.",
+  "type": "module",
+  "bin": { "parity-compare": "src/cli.mjs" },
+  "exports": {
+    ".": "./src/compare.mjs",
+    "./png": "./src/png.mjs",
+    "./bands": "./src/bands.mjs"
+  },
+  "files": ["src", "README.md", "LICENSE"],
+  "engines": { "node": ">=20" },
+  "scripts": { "test": "node --test test/" },
+  "license": "MIT",
+  "keywords": ["screenshot", "visual-regression", "parity", "png", "diff"]
+}
