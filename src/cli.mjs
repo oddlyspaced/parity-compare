@@ -80,7 +80,8 @@ function line(name, r) {
     r.verdict.toUpperCase().padEnd(6),
     `bands ${String(r.structure.matched)}/${String(r.structure.rnBands)}`.padEnd(12),
     `offset ${offset}`.padEnd(13),
-    `content ${(r.content.worstBandRatio * 100).toFixed(2)}%`,
+    `content ${(r.content.overallRatio * 100).toFixed(2)}%`.padEnd(15),
+    `worst band ${(r.content.worstBandRatio * 100).toFixed(2)}%`,
   ].join(" ");
 }
 

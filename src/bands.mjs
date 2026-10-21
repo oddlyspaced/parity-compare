@@ -67,9 +67,21 @@ export function findBands(image, opts = {}) {
     y1 = image.height,
     minGap = 4,
     minHeight = 3,
-    minInk = 1,
+    /**
+     * The share of a row's sampled width that must be ink for the row to belong to a band.
+     *
+     * Not one pixel. A scroll indicator is about 1% of the width and runs the whole height of a
+     * list, so at one pixel it bridges every gap and the entire list collapses into a single band.
+     * Measured on a 1280 px Android capture: the React Native scrollbar is 12 px of grey at the
+     * right edge, present in every row, and it merged nine feed rows into one 1405 px band while
+     * the native capture, which draws no scrollbar, reported them separately. A real row of
+     * content is far wider than this.
+     */
+    minInkFraction = 0.02,
     ...rowOpts
   } = opts;
+  const sampled = Math.max(1, Math.ceil(((rowOpts.x1 ?? image.width) - (rowOpts.x0 ?? 0)) / (rowOpts.step ?? 2)));
+  const minInk = Math.max(1, Math.round(sampled * minInkFraction));
   const bands = [];
   let start = null;
   let lastInk = null;

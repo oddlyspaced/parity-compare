@@ -187,6 +187,8 @@ export function compareScreens(rnImage, natImage, options = {}) {
 
   const bands = pairs.map((p) => compareBand(rnImage, natImage, p, opts));
   const worstContent = bands.reduce((w, b) => (b.ratio > w ? b.ratio : w), 0);
+  const totalDiffering = bands.reduce((t, b) => t + b.differingPixels, 0);
+  const totalCompared = bands.reduce((t, b) => t + b.comparedPixels, 0);
   const offsets = bands.map((b) => b.offset);
   const maxOffset = offsets.reduce((m, o) => Math.max(m, Math.abs(o)), 0);
   const firstOffset = bands.find((b) => Math.abs(b.offset) > opts.offsetTolerance) ?? null;
@@ -216,10 +218,14 @@ export function compareScreens(rnImage, natImage, options = {}) {
       heightDeltas: heightDeltas.map((b) => ({ rnTop: b.rn.top, delta: b.heightDelta })),
     },
     content: {
+      // Both are reported. The worst band is what a single badly wrong element looks like; the
+      // overall ratio is what the screen looks like. A small band holding one substituted icon can
+      // be most of its own area and almost none of the screen, and a reader needs to see which.
       worstBandRatio: worstContent,
+      overallRatio: totalCompared ? totalDiffering / totalCompared : 0,
       threshold: opts.contentThreshold,
-      differingPixels: bands.reduce((s, b) => s + b.differingPixels, 0),
-      comparedPixels: bands.reduce((s, b) => s + b.comparedPixels, 0),
+      differingPixels: totalDiffering,
+      comparedPixels: totalCompared,
     },
     raw: rawDifference(rnImage, natImage, opts),
     bands,
